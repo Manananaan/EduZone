@@ -3,8 +3,8 @@
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const DAY_NAMES_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const TYPE_COLORS = { class: '#126A80', study: '#169A8D', exam: '#C0392B', personal: '#20B89A' };
-const SCHEDULE_START_HOUR = 7;
-const SCHEDULE_END_HOUR = 22;
+const SCHEDULE_START_HOUR = 6;
+const SCHEDULE_END_HOUR = 23;
 
 let state = { tasks: [], schedule: [], goals: [], summary: {}, taskFilter: 'all' };
 
@@ -255,7 +255,11 @@ function renderScheduleGrid() {
 
   // place events absolutely within their starting cell, spanning height by duration
   state.schedule.forEach(ev => {
-    const cell = grid.querySelector(`.sg-cell[data-day="${ev.day_of_week}"][data-hour="${parseInt(ev.start_time.split(':')[0], 10)}"]`);
+    let hour = parseInt(ev.start_time.split(':')[0], 10);
+    // clamp to the visible range so an event never silently disappears
+    if (hour < SCHEDULE_START_HOUR) hour = SCHEDULE_START_HOUR;
+    if (hour >= SCHEDULE_END_HOUR) hour = SCHEDULE_END_HOUR - 1;
+    const cell = grid.querySelector(`.sg-cell[data-day="${ev.day_of_week}"][data-hour="${hour}"]`);
     if (!cell) return;
     const startMin = timeToMinutes(ev.start_time);
     const endMin = timeToMinutes(ev.end_time);
@@ -295,6 +299,12 @@ const eventForm = document.getElementById('event-form');
 document.getElementById('add-event-btn').addEventListener('click', () => { eventModal.hidden = false; });
 document.getElementById('event-cancel').addEventListener('click', () => { eventModal.hidden = true; eventForm.reset(); });
 eventModal.addEventListener('click', (e) => { if (e.target === eventModal) { eventModal.hidden = true; } });
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !eventModal.hidden) {
+    eventModal.hidden = true;
+    eventForm.reset();
+  }
+});
 
 eventForm.addEventListener('submit', async (e) => {
   e.preventDefault();
