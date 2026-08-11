@@ -1,0 +1,5 @@
+node_modules/
+eduzone.db
+eduzone.db-wal
+eduzone.db-shm
+.env

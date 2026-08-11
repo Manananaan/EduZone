@@ -1,0 +1,187 @@
+/* ==========================================================================
+   EDUZONE — design tokens
+   Palette from the brand brief: Navy, Deep Blue, Teal, Green, off-white.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap');
+
+:root {
+  --navy: #143051;
+  --deep-blue: #126A80;
+  --teal: #169A8D;
+  --green: #20B89A;
+  --bg: #F8FAFB;
+  --gray-light: #E9EFF2;
+  --text-gray: #526575;
+  --white: #ffffff;
+
+  --grad: linear-gradient(120deg, var(--navy), var(--deep-blue) 55%, var(--teal));
+  --grad-accent: linear-gradient(90deg, var(--teal), var(--green));
+
+  --shadow-sm: 0 1px 2px rgba(20, 48, 81, 0.06), 0 1px 1px rgba(20, 48, 81, 0.04);
+  --shadow-md: 0 8px 24px rgba(20, 48, 81, 0.08);
+  --shadow-lg: 0 20px 48px rgba(20, 48, 81, 0.14);
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--navy);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 { font-family: var(--font-display); margin: 0; color: var(--navy); }
+p { margin: 0; }
+a { color: inherit; text-decoration: none; }
+button { font-family: var(--font-body); cursor: pointer; }
+input, select { font-family: var(--font-body); }
+
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+.mono { font-family: var(--font-mono); letter-spacing: 0.02em; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   Reusable pieces
+   ========================================================================== */
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--gray-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: none;
+  font-weight: 600;
+  font-size: 14.5px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.btn:active { transform: translateY(1px) scale(0.98); }
+
+.btn-primary {
+  background: var(--grad);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+}
+.btn-primary:hover { box-shadow: var(--shadow-lg); }
+
+.btn-ghost {
+  background: var(--gray-light);
+  color: var(--navy);
+}
+.btn-ghost:hover { background: #dde8ec; }
+
+.btn-outline {
+  background: transparent;
+  color: var(--navy);
+  border: 1.5px solid var(--gray-light);
+}
+.btn-outline:hover { border-color: var(--teal); color: var(--teal); }
+
+.btn-danger {
+  background: #FDEEEE;
+  color: #C0392B;
+}
+.btn-danger:hover { background: #fbdede; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+.pill-navy { background: rgba(20,48,81,0.08); color: var(--navy); }
+.pill-teal { background: rgba(22,154,141,0.12); color: var(--teal); }
+.pill-green { background: rgba(32,184,154,0.12); color: #17925a; }
+.pill-red { background: #FDEEEE; color: #C0392B; }
+.pill-amber { background: #FEF6E8; color: #B7791F; }
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--gray-light);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--grad-accent);
+  transition: width 0.6s cubic-bezier(.4,0,.2,1);
+}
+
+.toast-stack {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toast {
+  background: var(--navy);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  animation: toast-in 0.25s ease;
+  max-width: 300px;
+}
+.toast.error { background: #C0392B; }
+.toast.success { background: linear-gradient(90deg, var(--teal), var(--green)); }
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+::selection { background: var(--teal); color: #fff; }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--gray-light) 25%, #dfe8ec 37%, var(--gray-light) 63%);
+  background-size: 400% 100%;
+  animation: skeleton 1.4s ease infinite;
+  border-radius: 8px;
+}
+@keyframes skeleton {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}

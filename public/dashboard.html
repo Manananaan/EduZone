@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — EDUZONE</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <span class="sb-dot"></span> EDUZONE
+    </div>
+
+    <nav class="sb-nav">
+      <button class="sb-link is-active" data-view="overview">
+        <span class="sb-ico">▣</span> Overview
+      </button>
+      <button class="sb-link" data-view="tasks">
+        <span class="sb-ico">☑</span> Tasks
+      </button>
+      <button class="sb-link" data-view="schedule">
+        <span class="sb-ico">▦</span> Schedule
+      </button>
+      <button class="sb-link" data-view="goals">
+        <span class="sb-ico">◎</span> Goals
+      </button>
+    </nav>
+
+    <div class="sb-footer">
+      <div class="sb-user" id="sb-user">
+        <span class="sb-avatar" id="sb-avatar">?</span>
+        <div>
+          <div class="sb-user-name" id="sb-user-name">Loading…</div>
+          <div class="sb-user-email" id="sb-user-email"></div>
+        </div>
+      </div>
+      <button class="btn btn-outline sb-logout" id="logout-btn">Log out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <section class="view" id="view-overview">
+      <header class="view-head">
+        <div>
+          <h1 id="greeting">Good morning 👋</h1>
+          <p class="view-sub" id="today-str">Here's your plan for today.</p>
+        </div>
+        <button class="btn btn-primary" id="quick-add-task">+ Add task</button>
+      </header>
+
+      <div class="stat-grid">
+        <div class="card stat-card">
+          <span class="stat-label">Tasks pending</span>
+          <span class="stat-value" id="stat-pending">–</span>
+          <span class="pill pill-navy" id="stat-total-pill">– total</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Classes today</span>
+          <span class="stat-value" id="stat-classes">–</span>
+          <span class="pill pill-teal">on schedule</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Avg. goal progress</span>
+          <span class="stat-value" id="stat-progress">–%</span>
+          <div class="progress-track" style="margin-top:8px"><div class="progress-fill" id="stat-progress-bar" style="width:0%"></div></div>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Tasks completed</span>
+          <span class="stat-value" id="stat-done">–</span>
+          <span class="pill pill-green">this week</span>
+        </div>
+      </div>
+
+      <div class="overview-grid">
+        <div class="card panel">
+          <div class="panel-head">
+            <h3>Today's plan</h3>
+            <button class="link-btn" data-goto="schedule">Full schedule →</button>
+          </div>
+          <div id="today-timeline" class="timeline"></div>
+        </div>
+
+        <div class="card panel">
+          <div class="panel-head">
+            <h3>Up next</h3>
+            <button class="link-btn" data-goto="tasks">All tasks →</button>
+          </div>
+          <div id="today-tasks" class="mini-task-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TASKS -->
+    <section class="view" id="view-tasks" hidden>
+      <header class="view-head">
+        <div>
+          <h1>Tasks</h1>
+          <p class="view-sub">Create → Prioritize → Complete.</p>
+        </div>
+      </header>
+
+      <form class="add-row card" id="task-form">
+        <input type="text" name="title" placeholder="Task title, e.g. Physics revision" required>
+        <input type="text" name="subject" placeholder="Subject" value="General">
+        <input type="date" name="due_date">
+        <select name="priority">
+          <option value="low">Low priority</option>
+          <option value="medium" selected>Medium priority</option>
+          <option value="high">High priority</option>
+        </select>
+        <button type="submit" class="btn btn-primary">+ Add</button>
+      </form>
+
+      <div class="task-filters">
+        <button class="chip is-active" data-filter="all">All</button>
+        <button class="chip" data-filter="pending">Pending</button>
+        <button class="chip" data-filter="done">Done</button>
+      </div>
+
+      <div class="card task-board" id="task-list"></div>
+    </section>
+
+    <!-- SCHEDULE -->
+    <section class="view" id="view-schedule" hidden>
+      <header class="view-head">
+        <div>
+          <h1>Weekly schedule</h1>
+          <p class="view-sub">Classes → Study blocks → What's next.</p>
+        </div>
+        <button class="btn btn-primary" id="add-event-btn">+ Add event</button>
+      </header>
+
+      <div class="card schedule-wrap">
+        <div class="schedule-grid" id="schedule-grid"></div>
+      </div>
+    </section>
+
+    <!-- GOALS -->
+    <section class="view" id="view-goals" hidden>
+      <header class="view-head">
+        <div>
+          <h1>Grade goals</h1>
+          <p class="view-sub">Target → Current → Progress.</p>
+        </div>
+      </header>
+
+      <form class="add-row card" id="goal-form">
+        <input type="text" name="subject" placeholder="Subject, e.g. Mathematics" required>
+        <input type="number" name="current_grade" placeholder="Current %" min="0" max="100" value="0">
+        <input type="number" name="target_grade" placeholder="Target %" min="1" max="100" value="90">
+        <button type="submit" class="btn btn-primary">+ Add goal</button>
+      </form>
+
+      <div class="goal-grid" id="goal-list"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Add event modal -->
+<div class="modal-overlay" id="event-modal" hidden>
+  <form class="card modal" id="event-form">
+    <h3>New schedule event</h3>
+    <label class="field"><span class="field-label">Title</span>
+      <input type="text" name="title" placeholder="e.g. Physics class" required>
+    </label>
+    <label class="field"><span class="field-label">Day</span>
+      <select name="day_of_week" required>
+        <option value="0">Sunday</option>
+        <option value="1">Monday</option>
+        <option value="2">Tuesday</option>
+        <option value="3">Wednesday</option>
+        <option value="4">Thursday</option>
+        <option value="5">Friday</option>
+        <option value="6">Saturday</option>
+      </select>
+    </label>
+    <div class="field-row">
+      <label class="field"><span class="field-label">Start</span><input type="time" name="start_time" required></label>
+      <label class="field"><span class="field-label">End</span><input type="time" name="end_time" required></label>
+    </div>
+    <label class="field"><span class="field-label">Type</span>
+      <select name="type">
+        <option value="class">Class</option>
+        <option value="study">Study block</option>
+        <option value="exam">Exam</option>
+        <option value="personal">Personal</option>
+      </select>
+    </label>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="event-cancel">Cancel</button>
+      <button type="submit" class="btn btn-primary">Add event</button>
+    </div>
+  </form>
+</div>
+
+<div class="toast-stack" id="toast-stack"></div>
+
+<script src="/js/dashboard.js"></script>
+</body>
+</html>

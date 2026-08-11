@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDUZONE — Plan smarter. Study better.</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+
+<div class="auth-shell">
+
+  <!-- LEFT: brand / story panel -->
+  <aside class="auth-brand">
+    <div class="brand-noise"></div>
+    <div class="brand-top">
+      <div class="brand-mark">
+        <span class="brand-mark-dot"></span>
+        EDUZONE
+      </div>
+    </div>
+
+    <div class="brand-mid">
+      <h1 class="brand-headline">One dashboard<br>for tasks, schedule<br>&amp; grades.</h1>
+      <p class="brand-sub">Plan smarter. Study better. Win your goals.</p>
+
+      <div class="brand-cards">
+        <div class="float-card fc-1">
+          <span class="fc-label">Today</span>
+          <span class="fc-value">3 Tasks Due</span>
+        </div>
+        <div class="float-card fc-2">
+          <span class="fc-label">Next Exam</span>
+          <span class="fc-value">Math — Tomorrow</span>
+        </div>
+        <div class="float-card fc-3">
+          <span class="fc-label">Goal</span>
+          <div class="fc-progress">
+            <div class="progress-track"><div class="progress-fill" style="width:82%"></div></div>
+            <span class="fc-value">82% → 90%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-bottom">
+      <div class="brand-step" data-step="1"><span>01</span>Add tasks &amp; classes</div>
+      <div class="brand-step" data-step="2"><span>02</span>Set your goals</div>
+      <div class="brand-step" data-step="3"><span>03</span>Track your progress</div>
+    </div>
+  </aside>
+
+  <!-- RIGHT: form panel -->
+  <main class="auth-panel">
+    <div class="auth-panel-inner">
+
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab is-active" id="tab-login" role="tab" aria-selected="true">Log in</button>
+        <button class="auth-tab" id="tab-register" role="tab" aria-selected="false">Create account</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="login-form" class="auth-form" autocomplete="on">
+        <h2 class="form-title">Welcome back</h2>
+        <p class="form-sub">Your dashboard is waiting.</p>
+
+        <label class="field">
+          <span class="field-label">Email</span>
+          <input type="email" name="email" placeholder="you@school.edu" required autocomplete="email">
+        </label>
+
+        <label class="field">
+          <span class="field-label">Password</span>
+          <div class="pw-wrap">
+            <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password" minlength="6">
+            <button type="button" class="pw-toggle" aria-label="Show password">👁</button>
+          </div>
+        </label>
+
+        <div id="login-error" class="form-error" hidden></div>
+
+        <button type="submit" class="btn btn-primary auth-submit">
+          <span class="btn-text">Log in</span>
+          <span class="btn-spinner" hidden></span>
+        </button>
+
+        <p class="form-hint">New to EDUZONE? <a href="#" data-switch="register">Create an account</a></p>
+
+        <div class="demo-hint">
+          <span class="pill pill-teal">Demo</span>
+          Try <b>demo@eduzone.app</b> / <b>demo123</b>
+        </div>
+      </form>
+
+      <!-- REGISTER FORM -->
+      <form id="register-form" class="auth-form" autocomplete="on" hidden>
+        <h2 class="form-title">Start planning today</h2>
+        <p class="form-sub">Set up your smart student dashboard.</p>
+
+        <label class="field">
+          <span class="field-label">Full name</span>
+          <input type="text" name="name" placeholder="Omar Hassan" required autocomplete="name">
+        </label>
+
+        <label class="field">
+          <span class="field-label">Email</span>
+          <input type="email" name="email" placeholder="you@school.edu" required autocomplete="email">
+        </label>
+
+        <label class="field">
+          <span class="field-label">Password</span>
+          <div class="pw-wrap">
+            <input type="password" name="password" placeholder="At least 6 characters" required minlength="6" autocomplete="new-password">
+            <button type="button" class="pw-toggle" aria-label="Show password">👁</button>
+          </div>
+          <div class="pw-strength"><span></span><span></span><span></span></div>
+        </label>
+
+        <div id="register-error" class="form-error" hidden></div>
+
+        <button type="submit" class="btn btn-primary auth-submit">
+          <span class="btn-text">Create my dashboard</span>
+          <span class="btn-spinner" hidden></span>
+        </button>
+
+        <p class="form-hint">Already have an account? <a href="#" data-switch="login">Log in</a></p>
+      </form>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast-stack" id="toast-stack"></div>
+
+<script src="/js/auth.js"></script>
+</body>
+</html>
