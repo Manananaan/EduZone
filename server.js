@@ -35,6 +35,14 @@ function auth(req, res, next) {
   }
 }
 
+// Runs after auth(). Looks up admin status fresh from the DB on every request
+// (rather than trusting the JWT) so revoking admin access takes effect immediately.
+function requireAdmin(req, res, next) {
+  const row = db.prepare('SELECT is_admin FROM users WHERE id = ?').get(req.user.id);
+  if (!row || !row.is_admin) return res.status(403).json({ error: 'Admin access required.' });
+  next();
+}
+
 function setAuthCookie(res, token) {
   res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
@@ -62,6 +70,7 @@ app.post('/api/register', (req, res) => {
   ).run(name.trim(), email.toLowerCase(), hash, avatar);
 
   const user = { id: info.lastInsertRowid, name: name.trim(), email: email.toLowerCase() };
+  db.prepare("UPDATE users SET last_login = datetime('now') WHERE id = ?").run(user.id);
   setAuthCookie(res, signToken(user));
   res.status(201).json({ user });
 });
@@ -76,6 +85,7 @@ app.post('/api/login', (req, res) => {
   }
 
   const user = { id: row.id, name: row.name, email: row.email };
+  db.prepare("UPDATE users SET last_login = datetime('now') WHERE id = ?").run(row.id);
   setAuthCookie(res, signToken(user));
   res.json({ user });
 });
@@ -86,9 +96,9 @@ app.post('/api/logout', (req, res) => {
 });
 
 app.get('/api/me', auth, (req, res) => {
-  const row = db.prepare('SELECT id, name, email, avatar_color, created_at FROM users WHERE id = ?').get(req.user.id);
+  const row = db.prepare('SELECT id, name, email, avatar_color, is_admin, last_login, created_at FROM users WHERE id = ?').get(req.user.id);
   if (!row) return res.status(404).json({ error: 'User not found' });
-  res.json({ user: row });
+  res.json({ user: { ...row, is_admin: !!row.is_admin } });
 });
 
 // ---------- tasks ----------
@@ -210,7 +220,74 @@ app.get('/api/summary', auth, (req, res) => {
   });
 });
 
-// ---------- SPA fallbacks ----------
+// ---------- admin ----------
+app.get('/api/admin/overview', auth, requireAdmin, (req, res) => {
+  const totalUsers = db.prepare('SELECT COUNT(*) c FROM users').get().c;
+  const totalTasks = db.prepare('SELECT COUNT(*) c FROM tasks').get().c;
+  const totalEvents = db.prepare('SELECT COUNT(*) c FROM schedule').get().c;
+  const totalGoals = db.prepare('SELECT COUNT(*) c FROM goals').get().c;
+  const newToday = db.prepare("SELECT COUNT(*) c FROM users WHERE date(created_at) = date('now')").get().c;
+  const newThisWeek = db.prepare("SELECT COUNT(*) c FROM users WHERE created_at >= datetime('now', '-7 days')").get().c;
+  const activeToday = db.prepare("SELECT COUNT(*) c FROM users WHERE date(last_login) = date('now')").get().c;
+  const signupsByDay = db.prepare(`
+    SELECT date(created_at) AS day, COUNT(*) AS count
+    FROM users
+    WHERE created_at >= datetime('now', '-13 days')
+    GROUP BY day
+    ORDER BY day ASC
+  `).all();
+  res.json({ totalUsers, totalTasks, totalEvents, totalGoals, newToday, newThisWeek, activeToday, signupsByDay });
+});
+
+app.get('/api/admin/users', auth, requireAdmin, (req, res) => {
+  const rows = db.prepare(`
+    SELECT
+      u.id, u.name, u.email, u.avatar_color, u.is_admin, u.created_at, u.last_login,
+      (SELECT COUNT(*) FROM tasks t WHERE t.user_id = u.id) AS task_count,
+      (SELECT COUNT(*) FROM tasks t WHERE t.user_id = u.id AND t.status = 'done') AS task_done_count,
+      (SELECT COUNT(*) FROM schedule s WHERE s.user_id = u.id) AS event_count,
+      (SELECT COUNT(*) FROM goals g WHERE g.user_id = u.id) AS goal_count
+    FROM users u
+    ORDER BY u.created_at DESC
+  `).all().map(u => ({ ...u, is_admin: !!u.is_admin }));
+  res.json({ users: rows });
+});
+
+app.patch('/api/admin/users/:id/admin', auth, requireAdmin, (req, res) => {
+  const targetId = Number(req.params.id);
+  if (targetId === req.user.id) {
+    return res.status(400).json({ error: "You can't change your own admin status." });
+  }
+  const target = db.prepare('SELECT id, is_admin FROM users WHERE id = ?').get(targetId);
+  if (!target) return res.status(404).json({ error: 'User not found' });
+  const nextValue = target.is_admin ? 0 : 1;
+  db.prepare('UPDATE users SET is_admin = ? WHERE id = ?').run(nextValue, targetId);
+  res.json({ id: targetId, is_admin: !!nextValue });
+});
+
+app.delete('/api/admin/users/:id', auth, requireAdmin, (req, res) => {
+  const targetId = Number(req.params.id);
+  if (targetId === req.user.id) {
+    return res.status(400).json({ error: "You can't delete your own account from here." });
+  }
+  const info = db.prepare('DELETE FROM users WHERE id = ?').run(targetId);
+  if (info.changes === 0) return res.status(404).json({ error: 'User not found' });
+  res.json({ ok: true });
+});
+
+
+app.get('/admin', (req, res) => {
+  const token = req.cookies[COOKIE_NAME];
+  if (!token) return res.redirect('/');
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    const row = db.prepare('SELECT is_admin FROM users WHERE id = ?').get(payload.id);
+    if (!row || !row.is_admin) return res.redirect('/dashboard');
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+  } catch (e) {
+    res.redirect('/');
+  }
+});
 app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 

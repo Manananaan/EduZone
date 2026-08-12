@@ -21,8 +21,27 @@ end (no frameworks, no build step).
   by day/time/type, colour‑coded by type, click to remove.
 - **Grade goals** — set a target grade per subject and drag a slider to
   update current progress; a progress bar shows how close you are.
+- **Admin monitoring page** (`/admin`) — visible only to accounts flagged as
+  admin. Shows total users, active-today count, new signups this week, a
+  14‑day signup chart, and a searchable table of every user with their task
+  completion, schedule, and goal counts, last login, and role. Admins can
+  promote/demote other users or delete an account (which cascades and
+  removes that user's tasks, schedule, and goals too). An admin can't change
+  their own role or delete their own account from this page, to avoid
+  accidentally locking yourself out.
 - **Everything is per‑account** — every task, event, and goal is scoped to
   the logged‑in user in the database.
+
+## Making yourself an admin
+
+The demo account (`demo@eduzone.app`) is already an admin. To promote your
+own real account:
+
+```bash
+node set-admin.js you@example.com
+```
+
+Then log out and back in, and you'll see an **Admin** link in the sidebar.
 
 ## Getting started
 
@@ -36,11 +55,12 @@ Then open **http://localhost:3000**.
 
 ### Demo account
 ```
-email:    demo@eduzone.app
-password: demo123
+Admin:  demo@eduzone.app / demo123
+Student: friend@eduzone.app / friend123
 ```
 (Created by `node seed.js`. Skip that step and just register your own
-account if you'd rather start empty.)
+account if you'd rather start empty — then run `node set-admin.js` on your
+email if you want admin access.)
 
 ## Project structure
 
@@ -87,6 +107,10 @@ login/register.
 | GET/POST | `/api/goals` | List / create goals |
 | PATCH/DELETE | `/api/goals/:id` | Update / delete a goal |
 | GET | `/api/summary` | Dashboard overview numbers |
+| GET | `/api/admin/overview` | Admin-only: platform-wide stats |
+| GET | `/api/admin/users` | Admin-only: all users with activity counts |
+| PATCH | `/api/admin/users/:id/admin` | Admin-only: toggle another user's admin role |
+| DELETE | `/api/admin/users/:id` | Admin-only: delete a user and all their data |
 
 ## Notes for production use
 

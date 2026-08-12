@@ -72,6 +72,7 @@ async function loadUser() {
   document.getElementById('sb-user-name').textContent = user.name;
   document.getElementById('sb-user-email').textContent = user.email;
   document.getElementById('sb-avatar').textContent = user.name.trim()[0].toUpperCase();
+  if (user.is_admin) document.getElementById('admin-nav-link').hidden = false;
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   document.getElementById('greeting').textContent = `${greeting}, ${user.name.split(' ')[0]} 👋`;

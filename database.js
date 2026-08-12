@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS users (
   email         TEXT NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
   avatar_color  TEXT DEFAULT '#169A8D',
+  is_admin      INTEGER NOT NULL DEFAULT 0,
+  last_login    TEXT,
   created_at    TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
@@ -51,5 +53,14 @@ CREATE TABLE IF NOT EXISTS goals (
   current_grade INTEGER NOT NULL DEFAULT 0
 );
 `);
+
+// Migration-safe column additions for databases created before is_admin/last_login existed.
+const userColumns = db.prepare("PRAGMA table_info(users)").all().map(c => c.name);
+if (!userColumns.includes('is_admin')) {
+  db.exec("ALTER TABLE users ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0");
+}
+if (!userColumns.includes('last_login')) {
+  db.exec("ALTER TABLE users ADD COLUMN last_login TEXT");
+}
 
 module.exports = db;

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — EDUZONE</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/dashboard.css">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <span class="sb-dot"></span> EDUZONE
+    </div>
+
+    <nav class="sb-nav">
+      <a class="sb-link" href="/dashboard">
+        <span class="sb-ico">▣</span> Dashboard
+      </a>
+      <button class="sb-link is-active">
+        <span class="sb-ico">🛡</span> Admin
+      </button>
+    </nav>
+
+    <div class="sb-footer">
+      <div class="sb-user" id="sb-user">
+        <span class="sb-avatar" id="sb-avatar">?</span>
+        <div>
+          <div class="sb-user-name" id="sb-user-name">Loading…</div>
+          <div class="sb-user-email" id="sb-user-email"></div>
+        </div>
+      </div>
+      <button class="btn btn-outline sb-logout" id="logout-btn">Log out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <header class="view-head">
+      <div>
+        <h1>Admin — user monitoring</h1>
+        <p class="view-sub">A live view of every account and how they're using EDUZONE.</p>
+      </div>
+      <button class="btn btn-outline" id="refresh-btn">↻ Refresh</button>
+    </header>
+
+    <div class="stat-grid admin-stat-grid">
+      <div class="card stat-card">
+        <span class="stat-label">Total users</span>
+        <span class="stat-value" id="a-total-users">–</span>
+      </div>
+      <div class="card stat-card">
+        <span class="stat-label">Active today</span>
+        <span class="stat-value" id="a-active-today">–</span>
+        <span class="pill pill-green">logged in today</span>
+      </div>
+      <div class="card stat-card">
+        <span class="stat-label">New this week</span>
+        <span class="stat-value" id="a-new-week">–</span>
+      </div>
+      <div class="card stat-card">
+        <span class="stat-label">Total tasks</span>
+        <span class="stat-value" id="a-total-tasks">–</span>
+      </div>
+      <div class="card stat-card">
+        <span class="stat-label">Schedule events</span>
+        <span class="stat-value" id="a-total-events">–</span>
+      </div>
+      <div class="card stat-card">
+        <span class="stat-label">Goals set</span>
+        <span class="stat-value" id="a-total-goals">–</span>
+      </div>
+    </div>
+
+    <div class="card panel" style="margin-bottom:18px;">
+      <div class="panel-head">
+        <h3>Signups — last 14 days</h3>
+      </div>
+      <div id="signup-chart" class="signup-chart"></div>
+    </div>
+
+    <div class="card panel">
+      <div class="panel-head">
+        <h3>All users</h3>
+        <input type="search" id="user-search" placeholder="Search by name or email…" class="user-search">
+      </div>
+      <div class="table-wrap">
+        <table class="admin-table" id="user-table">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Joined</th>
+              <th>Last active</th>
+              <th>Tasks</th>
+              <th>Schedule</th>
+              <th>Goals</th>
+              <th>Role</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="user-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast-stack" id="toast-stack"></div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>

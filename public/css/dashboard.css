@@ -47,6 +47,7 @@
 }
 .sb-link:hover { background: rgba(255,255,255,0.06); color: #fff; }
 .sb-link.is-active { background: rgba(255,255,255,0.12); color: #fff; }
+a.sb-link { text-decoration: none; }
 .sb-ico { font-size: 15px; opacity: 0.85; width: 16px; text-align: center; }
 
 .sb-footer { border-top: 1px solid rgba(255,255,255,0.12); padding-top: 16px; margin-top: auto; }

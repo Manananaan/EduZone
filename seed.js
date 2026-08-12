@@ -14,13 +14,25 @@ if (existing) {
   db.prepare('DELETE FROM tasks WHERE user_id = ?').run(userId);
   db.prepare('DELETE FROM schedule WHERE user_id = ?').run(userId);
   db.prepare('DELETE FROM goals WHERE user_id = ?').run(userId);
+  db.prepare('UPDATE users SET is_admin = 1 WHERE id = ?').run(userId);
 } else {
   const hash = bcrypt.hashSync('demo123', 10);
   const info = db.prepare(
-    'INSERT INTO users (name, email, password_hash, avatar_color) VALUES (?, ?, ?, ?)'
+    'INSERT INTO users (name, email, password_hash, avatar_color, is_admin, last_login) VALUES (?, ?, ?, ?, 1, datetime(\'now\'))'
   ).run('Demo Student', email, hash, '#169A8D');
   userId = info.lastInsertRowid;
-  console.log('Created demo user:', email, '/ demo123');
+  console.log('Created demo user (admin):', email, '/ demo123');
+}
+
+// a second, non-admin account so the admin table has more than one row to show
+const friendEmail = 'friend@eduzone.app';
+const friendExisting = db.prepare('SELECT id FROM users WHERE email = ?').get(friendEmail);
+if (!friendExisting) {
+  const friendHash = bcrypt.hashSync('friend123', 10);
+  db.prepare(
+    'INSERT INTO users (name, email, password_hash, avatar_color, last_login) VALUES (?, ?, ?, ?, datetime(\'now\', \'-1 day\'))'
+  ).run('Sara Ali', friendEmail, friendHash, '#20B89A');
+  console.log('Created sample non-admin user:', friendEmail, '/ friend123');
 }
 
 const today = new Date();
